@@ -1,0 +1,87 @@
+import userModel from "../models/userModel.js";
+import { checkPassword } from "../utils/passwordEncryption.js";
+
+
+type userType = {
+    userName: string;
+    userEmail: string;
+    userPassword: string
+}
+
+export type userAunthenticationReturnType = {
+    userExists?: boolean;
+    userLogged?: boolean;
+    user?: {
+        userName: string
+    }
+}
+export const createUser = async (userName: string, userHashedPassword: string, userEmail: string): Promise<boolean> => {
+    try {
+        const User = new userModel({
+            userEmail,
+            userPassword: userHashedPassword,
+            userName
+        })
+        await User.save()
+        return (true)
+    } catch (error) {
+        console.log(error)
+        throw new Error("account creation failed")
+    }
+}
+
+
+
+export const checkUser = async (userName: string, userPassword?: string, userEmail?: string): Promise<userAunthenticationReturnType> => {
+    try {
+        const userResult: userType | null = await userModel.findOne({ userName })
+        if (userEmail) {
+            const userEmailSearchResult: userType | null = await userModel.findOne({ userEmail })
+            return {
+                userExists: !!userEmailSearchResult || !!userResult
+            }
+        }
+        if (!userResult) {
+            return {
+                userExists: false
+            }
+        } else if (userPassword) {
+            const isPasswordValid: boolean = await checkPassword(userPassword, userResult.userPassword)
+            return {
+                userExists: true,
+                userLogged: isPasswordValid,
+                user: {
+                    userName: userResult.userName
+                }
+            }
+        }
+        return {
+            userExists: true
+        }
+    } catch (error) {
+        console.log(error)
+        throw new Error("user checking error")
+    }
+}
+
+
+export const updateSocketID = async (id: string, userName: string) => {
+    try {
+        await userModel.updateOne({ userName: userName }, { socketID: id })
+        return true
+    } catch (error) {
+        console.log(error)
+        return false
+    }
+}
+
+export const getSocketID = async (userName: string): Promise<string | false> => {
+    try {
+        const user = await userModel.find({ userName: userName })
+        return user[0]?.socketID as string
+    } catch (error) {
+        console.log(error)
+        return false
+    }
+}
+
