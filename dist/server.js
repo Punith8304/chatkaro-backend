@@ -16,7 +16,8 @@ dotenv.config();
 app.use(express.json());
 // cors config
 app.use(cors({
-    origin: "http://localhost:3000",
+    // origin: "http://localhost:3000",
+    origin: "https://chatkaro-gamma.vercel.app",
     credentials: true,
     optionsSuccessStatus: 200
 }));
@@ -27,7 +28,8 @@ store.on('error', function (error) {
 const server = createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:3000",
+        // origin: "http://localhost:3000",
+        origin: "https://chatkaro-gamma.vercel.app",
         methods: ["GET", "POST"],
         // transports: ['websocket', 'polling'],
         credentials: true
