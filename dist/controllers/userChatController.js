@@ -2,9 +2,12 @@ import { sendMessage, getChat } from "../services/messagingService.js";
 import { getUserFriendsList, changeChatList, searchFriends, suggestedFriendsUsingLimit, checkUserExisits } from "../services/friendListServices.js";
 export const getChatHistory = async (req, res) => {
     const receiver = req.params.userName;
-    const sender = req.session.user.userName;
     const loadedMsgsCount = Number(req.query.loadedMsgsCount);
     try {
+        if (!req.session.user) {
+            throw new Error("Failed to fetch messages");
+        }
+        const sender = req.session.user.userName;
         const chatHistory = await getChat({ loadedMsgsCount, sender, receiver });
         // console.log(chatHistory, "chat history")
         if (!Array.isArray(chatHistory)) {

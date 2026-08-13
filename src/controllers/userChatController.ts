@@ -16,9 +16,13 @@ export type chatHistoryType = {
 
 export const getChatHistory = async (req: Request, res: Response) => {
     const receiver: string = req.params.userName!;
-    const sender: string = req.session.user!.userName
+    
     const  loadedMsgsCount: number = Number(req.query.loadedMsgsCount);
     try {
+        if(!req.session.user) {
+            throw new Error("Failed to fetch messages")
+        }
+        const sender: string = req.session.user!.userName
         const chatHistory: chatMessage[] | { failedFetchMessages?: boolean } = await getChat({ loadedMsgsCount, sender, receiver })
         // console.log(chatHistory, "chat history")
         if (!Array.isArray(chatHistory)) {
