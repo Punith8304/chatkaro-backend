@@ -8,12 +8,25 @@ export const getUserFriendsList = async (user) => {
         //         await updateUnReadCount(user, friend.name)
         //     }
         // }
-        const friendsList = await userModel.findOne({ userName: user }, { "chatFriendsList.name": 1 });
+        // const friendsList = await userModel.findOne({ userName: user }, { "chatFriendsList.name": 1 })
+        const friendsList = await userModel.aggregate([
+            {
+                $match: {
+                    userName: user
+                }
+            },
+            {
+                $project: {
+                    "chatFriendsList.name": 1
+                }
+            }
+        ]);
         // console.log({ section: "getting user friend List", status: "success" })
         // console.log(friendsList, "friends list")
+        console.log(friendsList, user, "--friendslist");
         return {
             success: true,
-            friendsList: friendsList?.chatFriendsList
+            friendsList: friendsList[0]?.chatFriendsList
         };
     }
     catch (error) {

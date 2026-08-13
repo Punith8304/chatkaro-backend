@@ -28,8 +28,9 @@ const connectionCB = (socket: Socket) => {
         (async function() {
             const user = (socket as any).handshake.auth.user;
             const friendsList = await getUserFriendsList(user);
-            console.log(friendsList, "getting update-friends")
+            console.log(friendsList, user, "getting update-friends")
             const suggestedList = await suggestedFriendsUsingLimit(user);
+            console.log(suggestedList, "--suggested list");
             (socket as any).emit("updated-friends", {
                 updatedList: friendsList.friendsList,
                 peers: suggestedList

@@ -63,7 +63,8 @@ export const getFriendsList = async (req: Request, res: Response) => {
     try {
         const friendsList: { success: boolean; friendsList: userModelFriendListType[] } = await getUserFriendsList(user);
         if (friendsList.success) {
-            return res.json({ friendsList: friendsList.friendsList, fetched: true })
+            const sendingData = { friendsList: friendsList.friendsList, fetched: true }
+            return res.status(200).json(sendingData)
         }
         res.json({ friendsList: [], fetched: false })
 

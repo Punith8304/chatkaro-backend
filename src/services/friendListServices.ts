@@ -12,12 +12,25 @@ export const getUserFriendsList = async (user: string): Promise<{ success: boole
         //         await updateUnReadCount(user, friend.name)
         //     }
         // }
-        const friendsList = await userModel.findOne({ userName: user }, { "chatFriendsList.name": 1 })
+        // const friendsList = await userModel.findOne({ userName: user }, { "chatFriendsList.name": 1 })
+        const friendsList = await userModel.aggregate([
+            {
+                $match: {
+                    userName: user
+                }
+            },
+            {
+                $project: {
+                    "chatFriendsList.name": 1
+                }
+            }
+        ])
         // console.log({ section: "getting user friend List", status: "success" })
         // console.log(friendsList, "friends list")
+        console.log(friendsList, user, "--friendslist")
         return {
             success: true,
-            friendsList: friendsList?.chatFriendsList as userModelFriendListType[]
+            friendsList: friendsList[0]?.chatFriendsList as userModelFriendListType[]
         }
     } catch (error) {
         // console.log({ section: "getting user friend List", error })

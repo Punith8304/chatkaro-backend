@@ -47,7 +47,8 @@ export const getFriendsList = async (req, res) => {
     try {
         const friendsList = await getUserFriendsList(user);
         if (friendsList.success) {
-            return res.json({ friendsList: friendsList.friendsList, fetched: true });
+            const sendingData = { friendsList: friendsList.friendsList, fetched: true };
+            return res.status(200).json(sendingData);
         }
         res.json({ friendsList: [], fetched: false });
         //if fetched {friendsList: [_id: new ObjectId, chatFriendsList: [{name: "al"}]], fetched: true}
