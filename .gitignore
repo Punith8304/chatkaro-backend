@@ -8,7 +8,7 @@ node_modules/
 
 # Production
 /build
-/src/
+/src
 
 # Misc
 .DS_Store
